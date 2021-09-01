@@ -6,6 +6,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.kzapart.todoList.RESTapi.registration.token.ConfirmationToken;
+import pl.kzapart.todoList.RESTapi.registration.token.ConfirmationTokenService;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +19,7 @@ public class AppUserService implements UserDetailsService {
     private final static String USER_NOT_FOUND = "user %s not found";
     private final AppUserRepository appUserRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final ConfirmationTokenService tokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -31,6 +37,10 @@ public class AppUserService implements UserDetailsService {
 
         appUser.setPassword(encodedPassword);
         appUserRepository.save(appUser);
-        return "it works";
+
+        String tokenUuid = UUID.randomUUID().toString();
+        ConfirmationToken token = new ConfirmationToken(tokenUuid, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), appUser);
+        tokenService.saveConfirmationToken(token);
+        return tokenUuid;
     }
 }
