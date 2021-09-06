@@ -48,4 +48,9 @@ public class AppUserService implements UserDetailsService {
     {
         return appUserRepository.enableAppUser(email);
     }
+
+    public AppUser findAppUserById(Long id)
+    {
+        return appUserRepository.findAppUserById(id).orElseThrow(()-> new IllegalStateException("No such user"));
+    }
 }

@@ -7,10 +7,12 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.kzapart.todoList.RESTapi.tasks.Task;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -51,7 +53,9 @@ public class AppUser implements UserDetails {
         this.password = password;
         this.appUserRole = appUserRole;
     }
-
+    @OneToMany
+    @JoinColumn(name = "userID")
+    private List<Task> tasks;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority =
