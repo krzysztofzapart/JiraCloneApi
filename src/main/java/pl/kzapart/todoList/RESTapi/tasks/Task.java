@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.kzapart.todoList.RESTapi.appuser.AppUser;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,4 +34,5 @@ public class Task {
         private TodoStatus todoStatus;
         private LocalDateTime created;
         private Long doneBy;
+        private Long userID;
 }

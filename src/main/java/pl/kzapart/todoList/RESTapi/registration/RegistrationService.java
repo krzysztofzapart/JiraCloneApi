@@ -22,35 +22,52 @@ public class RegistrationService {
     private final EmailSender emailSender;
 
     public String register(RegistrationRequest request) {
-        emailValidator.test(request.getEmail());
-        boolean isValidEmail = emailValidator.test(request.getEmail());
-        if(!isValidEmail)
-        {
-            throw new IllegalStateException("Email not valid");
+        boolean isValidEmail = emailValidator.
+                test(request.getEmail());
+
+        if (!isValidEmail) {
+            throw new IllegalStateException("email not valid");
         }
-        String token = appUserService.signUpUser(new AppUser(request.getFirstname(), request.getLastname(), request.getEmail(), request.getPassword(), AppUserRole.USER));
-        String link = "gttp://localhost:8080/api/v1/registration/confirm?token="+token;
-        emailSender.send(request.getEmail(), buildEmail(request.getFirstname(), link));
+
+        String token = appUserService.signUpUser(
+                new AppUser(
+                        request.getFirstName(),
+                        request.getLastName(),
+                        request.getEmail(),
+                        request.getPassword(),
+                        AppUserRole.USER
+
+                )
+        );
+
+        String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
+        emailSender.send(
+                request.getEmail(),
+                buildEmail(request.getFirstName(), link));
+
         return token;
     }
-    @Transactional
-    public String confirmToken(String token)
-    {
-        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElseThrow(()-> new IllegalStateException("token not found"));
 
-        if (confirmationToken.getConfirmedAt() != null)
-        {
+    @Transactional
+    public String confirmToken(String token) {
+        ConfirmationToken confirmationToken = confirmationTokenService
+                .getToken(token)
+                .orElseThrow(() ->
+                        new IllegalStateException("token not found"));
+
+        if (confirmationToken.getConfirmedAt() != null) {
             throw new IllegalStateException("email already confirmed");
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
-        if (expiredAt.isBefore(LocalDateTime.now()))
-        {
+        if (expiredAt.isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("token expired");
         }
+
         confirmationTokenService.setConfirmedAt(token);
-        appUserService.enableAppUSer(confirmationToken.getAppUser().getEmail());
+        appUserService.enableAppUser(
+                confirmationToken.getAppUser().getEmail());
         return "confirmed";
     }
 
@@ -122,5 +139,4 @@ public class RegistrationService {
                 "\n" +
                 "</div></div>";
     }
-
 }

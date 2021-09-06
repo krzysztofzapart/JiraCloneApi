@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import pl.kzapart.todoList.RESTapi.appuser.AppUserRole;
 import pl.kzapart.todoList.RESTapi.tasks.Task;
 
 import javax.persistence.*;
@@ -19,18 +21,19 @@ import java.util.List;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Entity
+@Component
 public class AppUser implements UserDetails {
 
 
     @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
+            name = "student_sequence",
+            sequenceName = "student_sequence",
             allocationSize = 1
     )
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
+            generator = "student_sequence"
     )
     private Long id;
     private String firstName;
@@ -41,6 +44,10 @@ public class AppUser implements UserDetails {
     private AppUserRole appUserRole;
     private Boolean locked = false;
     private Boolean enabled = false;
+
+    @OneToMany
+    @JoinColumn(name = "userID")
+    private List<Task> tasks;
 
     public AppUser(String firstName,
                    String lastName,
@@ -53,9 +60,7 @@ public class AppUser implements UserDetails {
         this.password = password;
         this.appUserRole = appUserRole;
     }
-    @OneToMany
-    @JoinColumn(name = "userID")
-    private List<Task> tasks;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority =
