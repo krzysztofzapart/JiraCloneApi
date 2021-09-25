@@ -16,15 +16,7 @@ public class TaskService {
 
     public String saveTask(Task task)
     {
-
-        //TODO TO FIX ADDING
-
-        task.setCreated(LocalDateTime.now());
-        task.setTodoStatus(TodoStatus.TODO);
-        task.setUserID(4L);
-
         taskRepository.save(task);
-
 
         return "Add task!";
     }

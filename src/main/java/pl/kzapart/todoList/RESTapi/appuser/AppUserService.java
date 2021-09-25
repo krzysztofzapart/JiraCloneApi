@@ -81,4 +81,8 @@ public class AppUserService implements UserDetailsService {
     {
         return appUserRepository.findAll();
     }
+    public AppUser findByEmail(String email)
+    {
+        return appUserRepository.findByEmail(email).orElseThrow(()-> new IllegalStateException("No such email"));
+    }
 }
