@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-@Entity
+@Entity(name = "user")
 @Component
 public class AppUser implements UserDetails {
 
@@ -36,6 +36,12 @@ public class AppUser implements UserDetails {
             generator = "student_sequence"
     )
     private Long id;
+    private String username;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     private String firstName;
     private String lastName;
     private String email;
