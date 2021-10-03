@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.kzapart.todoList.RESTapi.dto.AuthenticationResponse;
+import pl.kzapart.todoList.RESTapi.dto.LoginRequest;
 import pl.kzapart.todoList.RESTapi.dto.RegisterRequest;
 import pl.kzapart.todoList.RESTapi.service.AuthService;
 
@@ -25,5 +27,9 @@ public class AuthController {
     {
         authService.verifyAccount(token);
         return new ResponseEntity<>("Account Activated Successfully", HttpStatus.OK);
+    }
+    @PostMapping("/login")
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 }

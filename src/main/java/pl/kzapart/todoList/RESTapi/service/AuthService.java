@@ -1,16 +1,22 @@
 package pl.kzapart.todoList.RESTapi.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.kzapart.todoList.RESTapi.dto.AuthenticationResponse;
+import pl.kzapart.todoList.RESTapi.dto.LoginRequest;
 import pl.kzapart.todoList.RESTapi.dto.RegisterRequest;
 import pl.kzapart.todoList.RESTapi.model.NotificationEmail;
 import pl.kzapart.todoList.RESTapi.model.User;
 import pl.kzapart.todoList.RESTapi.model.VerificationToken;
 import pl.kzapart.todoList.RESTapi.repository.UserRepository;
 import pl.kzapart.todoList.RESTapi.repository.VerificationTokenRepository;
+import pl.kzapart.todoList.RESTapi.security.JwtProvider;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -24,6 +30,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
 
     @Transactional
@@ -39,7 +47,7 @@ public class AuthService {
 
         String token = generateVerificationToken(user);
         mailService.sendMail(new NotificationEmail("Please Activate your Account",
-                user.getEmail(), "Thank you for signing up to Spring Reddit, " +
+                user.getEmail(), "Thank you for signing up!, " +
                 "please click on the below url to activate your account : " +
                 "http://localhost:8080/api/v1/auth/accountVerification/" + token));
     }
@@ -63,5 +71,13 @@ public class AuthService {
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
         fetchUserAndEnable(verificationToken.orElseThrow(() -> new IllegalStateException("Invalid Token")));
+    }
+
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(token, loginRequest.getUsername());
     }
 }
