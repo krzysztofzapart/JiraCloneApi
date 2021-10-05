@@ -1,20 +1,17 @@
 package pl.kzapart.todoList.RESTapi.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.Instant;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TeamDto {
-    private Long teamId;
-    private String name;
+public class TaskResponse {
+    private Long id;
+    private String taskName;
+    private String url;
     private String description;
-    private Integer numberOfTasks;
-
+    private String userName;
+    private String teamName;
 }

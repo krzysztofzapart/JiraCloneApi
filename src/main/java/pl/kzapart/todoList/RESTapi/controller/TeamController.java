@@ -29,5 +29,10 @@ public class TeamController {
     {
         return ResponseEntity.status(HttpStatus.OK).body(teamService.getAllTeams());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<TeamDto> getTeam(@PathVariable Long id)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeam(id));
+    }
 }
 

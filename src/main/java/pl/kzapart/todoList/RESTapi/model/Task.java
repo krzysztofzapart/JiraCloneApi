@@ -16,7 +16,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
-    private String title;
+    private String taskName;
     private String description;
     private String url;
     private Instant createdDate;
