@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kzapart.todoList.RESTapi.dto.TaskRequest;
 import pl.kzapart.todoList.RESTapi.dto.TaskResponse;
-import pl.kzapart.todoList.RESTapi.dto.TeamDto;
 import pl.kzapart.todoList.RESTapi.exceptions.SpringTodoException;
 import pl.kzapart.todoList.RESTapi.mapper.TaskMapper;
 import pl.kzapart.todoList.RESTapi.model.Task;
@@ -14,6 +13,7 @@ import pl.kzapart.todoList.RESTapi.model.Team;
 import pl.kzapart.todoList.RESTapi.model.User;
 import pl.kzapart.todoList.RESTapi.repository.TaskRepository;
 import pl.kzapart.todoList.RESTapi.repository.TeamRepository;
+import pl.kzapart.todoList.RESTapi.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,16 +27,8 @@ public class TaskService {
     private final AuthService authService;
     private final TaskMapper taskMapper;
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-//    @Transactional
-//    public TeamDto save(TeamDto teamDto)
-//    {
-//        //User current = authService.getCurrentUser();
-//        Team save = teamRepository.save(teamMapper.mapDtoToTeam(teamDto));
-//        teamDto.setTeamId(save.getTeamId());
-//        //save.setUser(current);
-//        return teamDto;
-//    }
     @Transactional
     public Task save(TaskRequest taskRequest)
     {
@@ -52,8 +44,30 @@ public class TaskService {
     public List<TaskResponse> getTasksByTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalStateException(teamId.toString()));
-        List<Task> posts = taskRepository.findAllByTeam(team);
-        return posts.stream().map(taskMapper::mapToDto).collect(Collectors.toList());
+        List<Task> tasks = taskRepository.findAllByTeam(team);
+        return tasks.stream().map(taskMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaskResponse> getTasksByUser(String name)
+    {
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new SpringTodoException("No such user as "+name));
+        List<Task> tasks = taskRepository.findAllByUser(user);
+
+        return tasks.stream()
+                .map(taskMapper::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaskResponse> getMyTasks()
+    {
+        User user = authService.getCurrentUser();
+        List<Task> tasks = taskRepository.findAllByUser(user);
+        return tasks
+                .stream()
+                .map(taskMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
 }
