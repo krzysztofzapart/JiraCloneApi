@@ -47,6 +47,7 @@ public class AuthService {
         userRepository.save(user);
 
         String token = generateVerificationToken(user);
+        System.out.println(token);
         mailService.sendMail(new NotificationEmail("Please Activate your Account",
                 user.getEmail(), "Thank you for signing up!, " +
                 "please click on the below url to activate your account : " +

@@ -3,13 +3,11 @@ package pl.kzapart.todoList.RESTapi.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.kzapart.todoList.RESTapi.dto.CommentDto;
-import pl.kzapart.todoList.RESTapi.model.Comment;
 import pl.kzapart.todoList.RESTapi.service.CommentService;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -23,5 +21,15 @@ public class CommentController {
     {
         commentService.createPost(commentDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    @GetMapping("/by-task/{taskId}")
+    public List<CommentDto> getCommentsByTask(Long taskId)
+    {
+        return commentService.getCommentsByTask(taskId);
+    }
+    @GetMapping("/by-user/{taskId}")
+    public List<CommentDto> getCommentsByUser(Long userId)
+    {
+        return commentService.getCommentsByUser(userId);
     }
 }
