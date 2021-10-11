@@ -34,5 +34,33 @@ public class TeamController {
     {
         return ResponseEntity.status(HttpStatus.OK).body(teamService.getTeam(id));
     }
+
+    @RequestMapping(value = "{teamId}/add-user/{userId}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> addUserToTeam(@PathVariable Long teamId, @PathVariable Long userId)
+    {
+        teamService.addUserToTeam(teamId, userId);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> editTeam(@RequestBody TeamDto teamDto)
+    {
+        teamService.editTeam(teamDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteTeam(@PathVariable Long teamId)
+    {
+        teamService.deleteTeam(teamId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @RequestMapping(value = "{teamId}/delete-user/{userId}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> deleteUserFromTeam(@PathVariable Long teamId, @PathVariable Long userId)
+    {
+        teamService.deleteUserFromTeam(teamId, userId);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
+
 }
 

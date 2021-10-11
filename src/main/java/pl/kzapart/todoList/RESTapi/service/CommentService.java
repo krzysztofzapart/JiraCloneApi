@@ -58,4 +58,19 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void editComment(CommentDto commentDto)
+    {
+        Comment editedComment = commentRepository.findById(commentDto.getCommentId()).orElseThrow(() -> new SpringTodoException("No such comment found"));
+
+        editedComment.setText(commentDto.getText());
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId)
+    {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new SpringTodoException("No such comment found"));
+        commentRepository.delete(comment);
+    }
+
 }

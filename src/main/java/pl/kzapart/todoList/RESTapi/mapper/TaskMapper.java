@@ -14,7 +14,14 @@ public interface TaskMapper {
     @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
     @Mapping(target = "description", source = "taskRequest.description")
     @Mapping(target = "taskName", source = "taskRequest.taskName")
+    Task mapForAdmin(TaskRequest taskRequest, Team team, User user);
+
+    @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
+    @Mapping(target = "description", source = "taskRequest.description")
+    @Mapping(target = "taskName", source = "taskRequest.taskName")
+    @Mapping(target = "user.username", ignore = true)
     Task map(TaskRequest taskRequest, Team team, User user);
+
 
     @Mapping(target = "id", source = "taskId")
     @Mapping(target = "teamName", source = "team.name")

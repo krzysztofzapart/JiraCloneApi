@@ -32,4 +32,16 @@ public class CommentController {
     {
         return commentService.getCommentsByUser(userId);
     }
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId)
+    {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> editComment(@RequestBody CommentDto commentDto)
+    {
+        commentService.editComment(commentDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

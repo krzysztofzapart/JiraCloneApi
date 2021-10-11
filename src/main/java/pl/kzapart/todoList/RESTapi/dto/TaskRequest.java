@@ -13,4 +13,5 @@ public class TaskRequest {
     private String teamName;
     private String url;
     private String description;
+    private String username;
 }

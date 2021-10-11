@@ -40,6 +40,18 @@ public class TaskService {
         return save;
     }
 
+
+    @Transactional
+    public Task saveForAdmin(TaskRequest taskRequest)
+    {
+        Team team = teamRepository.findByName(taskRequest.getTeamName()).orElseThrow(()-> new SpringTodoException("Cannot found team by name "+taskRequest.getTeamName()));
+        User user = userRepository.findByUsername(taskRequest.getUsername()).orElseThrow(() -> new SpringTodoException("No such user found"));
+        Task save = taskRepository.save(taskMapper.mapForAdmin(taskRequest, team, user));
+        save.setTeam(team);
+        save.setUser(user);
+        return save;
+    }
+
     @Transactional(readOnly = true)
     public List<TaskResponse> getTasksByTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
@@ -68,6 +80,23 @@ public class TaskService {
                 .stream()
                 .map(taskMapper::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void editTask(TaskRequest taskRequest)
+    {
+        Task editedTask = taskRepository.findById(taskRequest.getTaskId()).orElseThrow(() -> new SpringTodoException("No such task found"));
+        taskRepository.save(editedTask);
+        editedTask.setTaskName(taskRequest.getTaskName());
+        editedTask.setDescription(taskRequest.getDescription());
+        editedTask.setUrl(taskRequest.getUrl());
+
+    }
+
+
+    public void deleteTask(Long taskId)
+    {
+        taskRepository.deleteById(taskId);
     }
 
 }

@@ -23,6 +23,12 @@ public class TaskController {
         taskService.save(taskRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    @PostMapping("/admin")
+    public ResponseEntity<Void> saveForAdmin(@RequestBody TaskRequest taskRequest)
+    {
+        taskService.saveForAdmin(taskRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
     @GetMapping("by-team/{id}")
     public ResponseEntity<List<TaskResponse>> getTasksByTeam(Long id) {
@@ -38,6 +44,19 @@ public class TaskController {
     public ResponseEntity<List<TaskResponse>> getMyTasks()
     {
         return ResponseEntity.status(HttpStatus.OK).body(taskService.getMyTasks());
+    }
+
+    @PutMapping
+    public ResponseEntity<String> editTask(@RequestBody TaskRequest taskRequest)
+    {
+        taskService.editTask(taskRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("{taskId}")
+    public ResponseEntity<String> deleteTaskById(@PathVariable Long taskId)
+    {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

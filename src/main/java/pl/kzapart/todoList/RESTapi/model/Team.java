@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -22,9 +23,11 @@ public class Team {
     private Long teamId;
     private String name;
     private String description;
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Task> tasks;
     private Instant createdDate;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @ManyToMany
+    private Set<User> users;
+
+
 }
