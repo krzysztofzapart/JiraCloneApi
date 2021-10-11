@@ -32,11 +32,10 @@ public class TeamService {
     {
        User current = authService.getCurrentUser();
        Team save = teamRepository.save(teamMapper.mapDtoToTeam(teamDto));
-       User newUser = userRepository.findById(2L).orElseThrow(() -> new SpringTodoException("No such user found"));
        teamDto.setTeamId(save.getTeamId());
+
        Set<User> newy = new HashSet<>();
        newy.add(current);
-       newy.add(newUser);
        save.setUsers(newy);
        return teamDto;
     }
