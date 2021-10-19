@@ -35,7 +35,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
 
 
-    @Transactional
     public void signup(RegisterRequest registerRequest) {
         User user = new User();
         user.setUsername(registerRequest.getUsername());
