@@ -12,13 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.kzapart.todoList.RESTapi.dto.AuthenticationResponse;
 import pl.kzapart.todoList.RESTapi.dto.LoginRequest;
 import pl.kzapart.todoList.RESTapi.dto.RegisterRequest;
+import pl.kzapart.todoList.RESTapi.exceptions.SpringTodoException;
 import pl.kzapart.todoList.RESTapi.model.NotificationEmail;
 import pl.kzapart.todoList.RESTapi.model.User;
+import pl.kzapart.todoList.RESTapi.model.UserProfile;
 import pl.kzapart.todoList.RESTapi.model.VerificationToken;
+import pl.kzapart.todoList.RESTapi.repository.UserProfileRepository;
 import pl.kzapart.todoList.RESTapi.repository.UserRepository;
 import pl.kzapart.todoList.RESTapi.repository.VerificationTokenRepository;
 import pl.kzapart.todoList.RESTapi.security.JwtProvider;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,20 +37,41 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final UserProfileRepository userProfileRepository;
 
 
     public void signup(RegisterRequest registerRequest) {
+       //create user
         User user = new User();
+        //create user profile
+        UserProfile userProfile = new UserProfile();
+        userProfile.setFirstname(registerRequest.getUsername());
+
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setCreated(Instant.now());
         user.setEnabled(false);
+        user.setUserProfile(userProfile);
 
-        userRepository.save(user);
 
+
+        //verify if user exist in database;
+        Optional<User> ifExist = userRepository.findByUsername(registerRequest.getUsername());
+        if(ifExist.isPresent())
+            throw new IllegalStateException("User already exist!");
+        else
+        {
+            userProfileRepository.save(userProfile);
+            userRepository.save(user);
+
+        }
+
+
+        //generating verification token
         String token = generateVerificationToken(user);
-        System.out.println(token);
+
+        //sending verification email
         mailService.sendMail(new NotificationEmail("Please Activate your Account",
                 user.getEmail(), "Thank you for signing up!, " +
                 "please click on the below url to activate your account : " +
@@ -65,12 +90,18 @@ public class AuthService {
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(token);
         verificationToken.setUser(user);
-
+        verificationToken.setExpirationTime(Instant.now().plusSeconds(900));
         verificationTokenRepository.save(verificationToken);
         return token;
     }
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
+
+        if(Instant.now().isAfter(verificationToken.get().getExpirationTime()))
+        {
+            throw new SpringTodoException("Token has expired");
+        }
+
         fetchUserAndEnable(verificationToken.orElseThrow(() -> new IllegalStateException("Invalid Token")));
     }
 

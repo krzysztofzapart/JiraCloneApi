@@ -3,6 +3,9 @@ package pl.kzapart.todoList.RESTapi.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -24,6 +27,13 @@ public class User {
     private String email;
     private Instant created;
     private boolean enabled;
-    @ManyToMany
+    @ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Team> teams;
+    @OneToOne(cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+    @JoinColumn(name = "profileId")
+    private UserProfile userProfile;
+
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -23,10 +24,12 @@ public class Team {
     private Long teamId;
     private String name;
     private String description;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
     private List<Task> tasks;
     private Instant createdDate;
-    @ManyToMany
+    @ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
     private Set<User> users;
 
 

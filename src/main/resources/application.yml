@@ -1,19 +1,13 @@
 spring:
   datasource:
-    password:
-    url:
-    username:
+    password: P@ssword
+    url: jdbc:mysql://localhost:3306/todoListDB
+    username: todoListUser
   mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    protocol: smtp
-    tls: true
-    properties.mail.smtp:
-      auth: true
-      starttls.enable: true
-      ssl.trust: ${MAIL_HOST}
+    host: localhost
+    port: 1025
+    username: hello
+    password: hello
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,6 +19,7 @@ spring:
         org:
           hibernate:
             type: trace
+            dialect: org.hibernate.dialect.H2Dialect
       mail:
         smtp:
           ssl:
@@ -47,6 +42,4 @@ logging:
             sql:
               BasicBinder:
                 TRACE
-
-
 
