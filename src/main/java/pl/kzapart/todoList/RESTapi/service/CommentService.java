@@ -1,6 +1,7 @@
 package pl.kzapart.todoList.RESTapi.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kzapart.todoList.RESTapi.dto.CommentDto;
@@ -27,6 +28,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
+    @Procedure
     public Comment createPost(CommentDto commentDto)
     {
         User current = authService.getCurrentUser();
@@ -48,9 +50,9 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
-    public List<CommentDto> getCommentsByUser(Long userId) {
+    public List<CommentDto> getCommentsByUsername(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()-> new SpringTodoException("No such user found"));
-        List<Comment> comments = commentRepository.findByUser(user);
+        List<Comment> comments = commentRepository.findByUserName(user.getUsername());
 
         return comments
                 .stream()

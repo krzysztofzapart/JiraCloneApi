@@ -49,7 +49,7 @@ public class TeamController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{teamId}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Long teamId)
     {
         teamService.deleteTeam(teamId);
@@ -60,6 +60,12 @@ public class TeamController {
     {
         teamService.deleteUserFromTeam(teamId, userId);
         return new ResponseEntity<>( HttpStatus.OK);
+    }
+    @GetMapping("/show-current-user-teams")
+    public ResponseEntity<Object> showCurrentUserTeams()
+    {
+        teamService.showCurrentUserTeams();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

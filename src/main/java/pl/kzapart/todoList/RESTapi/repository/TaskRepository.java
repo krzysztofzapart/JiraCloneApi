@@ -12,5 +12,5 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task,Long> {
     List<Task> findAllByTeam(Team team);
 
-    List<Task> findAllByUser(User user);
+    List<Task> findAllByUserName(String userName);
 }

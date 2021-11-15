@@ -19,12 +19,12 @@ public interface TaskMapper {
     @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
     @Mapping(target = "description", source = "taskRequest.description")
     @Mapping(target = "taskName", source = "taskRequest.taskName")
-    @Mapping(target = "user.username", ignore = true)
+    @Mapping(target = "userName", source = "user.username")
     Task map(TaskRequest taskRequest, Team team, User user);
 
 
     @Mapping(target = "id", source = "taskId")
     @Mapping(target = "teamName", source = "team.name")
-    @Mapping(target = "userName", source = "user.username")
+    @Mapping(target = "userName", source = "task.userName")
     TaskResponse mapToDto(Task task);
 }

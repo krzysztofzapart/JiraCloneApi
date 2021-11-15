@@ -30,7 +30,7 @@ public class CommentController {
     @GetMapping("/by-user/{taskId}")
     public List<CommentDto> getCommentsByUser(Long userId)
     {
-        return commentService.getCommentsByUser(userId);
+        return commentService.getCommentsByUsername(userId);
     }
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId)

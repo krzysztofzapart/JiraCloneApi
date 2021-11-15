@@ -36,7 +36,7 @@ public class TaskService {
         User user = authService.getCurrentUser();
         Task save = taskRepository.save(taskMapper.map(taskRequest, team, user));
         save.setTeam(team);
-        save.setUser(user);
+        save.setUserName(user.getUsername());
         return save;
     }
 
@@ -48,7 +48,7 @@ public class TaskService {
         User user = userRepository.findByUsername(taskRequest.getUsername()).orElseThrow(() -> new SpringTodoException("No such user found"));
         Task save = taskRepository.save(taskMapper.mapForAdmin(taskRequest, team, user));
         save.setTeam(team);
-        save.setUser(user);
+        save.setUserName(user.getUsername());
         return save;
     }
 
@@ -64,7 +64,7 @@ public class TaskService {
     public List<TaskResponse> getTasksByUser(String name)
     {
         User user = userRepository.findByUsername(name).orElseThrow(()-> new SpringTodoException("No such user as "+name));
-        List<Task> tasks = taskRepository.findAllByUser(user);
+        List<Task> tasks = taskRepository.findAllByUserName(user.getUsername());
 
         return tasks.stream()
                 .map(taskMapper::mapToDto)
@@ -75,7 +75,7 @@ public class TaskService {
     public List<TaskResponse> getMyTasks()
     {
         User user = authService.getCurrentUser();
-        List<Task> tasks = taskRepository.findAllByUser(user);
+        List<Task> tasks = taskRepository.findAllByUserName(user.getUsername());
         return tasks
                 .stream()
                 .map(taskMapper::mapToDto)

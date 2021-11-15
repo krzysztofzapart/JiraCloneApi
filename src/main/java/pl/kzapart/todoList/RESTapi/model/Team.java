@@ -24,12 +24,16 @@ public class Team {
     private Long teamId;
     private String name;
     private String description;
-    @OneToMany(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+
+    @OneToMany(mappedBy = "team", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Task> tasks;
+
     private Instant createdDate;
-    @ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+
+    @ManyToMany()
+    @JoinTable(name = "usersInTeams",
+            joinColumns = @JoinColumn(name = "teamId"),
+            inverseJoinColumns = @JoinColumn(name = "userId"))
     private Set<User> users;
 
 

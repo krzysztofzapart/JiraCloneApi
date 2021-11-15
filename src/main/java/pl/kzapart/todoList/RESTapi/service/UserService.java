@@ -20,10 +20,11 @@ public class UserService {
     private final AuthService authService;
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
+
     public Set<TeamDto> getUsersTeams(){
         User user = authService.getCurrentUser();
 
-        Set<Team> teams = teamRepository.findAllByUsers(user);
+        Set<Team> teams = teamRepository.findByUsers(user);
         return teams.stream()
                 .map(teamMapper::mapTeamToDto)
                 .collect(Collectors.toSet());

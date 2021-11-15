@@ -14,5 +14,6 @@ import java.util.Set;
 @Repository
 public interface TeamRepository extends JpaRepository<Team,Long> {
     Optional<Team> findByName(String name);
-    Set<Team> findAllByUsers(User user);
+    Set<Team> findByUsers(User user);
+
 }

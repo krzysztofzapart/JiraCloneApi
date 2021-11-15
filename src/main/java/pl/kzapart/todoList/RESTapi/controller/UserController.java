@@ -19,6 +19,7 @@ import java.util.Set;
 @RequestMapping("/api/v1/user")
 public class UserController {
 
+
     private final UserService userService;
 
     @GetMapping("/getTeams")

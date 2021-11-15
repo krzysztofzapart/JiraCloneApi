@@ -27,13 +27,13 @@ public class User {
     private String email;
     private Instant created;
     private boolean enabled;
-    @ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-    @Fetch(FetchMode.SUBSELECT)
+
+    @ManyToMany(mappedBy = "users")
     private Set<Team> teams;
-    @OneToOne(cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-    @JoinColumn(name = "profileId")
+
+    @OneToOne(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.PERSIST)
     private UserProfile userProfile;
+
+
 
 }

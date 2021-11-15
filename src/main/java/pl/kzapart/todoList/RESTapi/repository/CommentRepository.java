@@ -12,5 +12,5 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment,Long>{
     List<Comment> findByTask(Task task);
 
-    List<Comment> findByUser(User user);
+    List<Comment> findByUserName(String username);
 }

@@ -24,8 +24,7 @@ public class UserProfile {
     private String jobName;
     private byte[] avatar;
 
-    @OneToOne(cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+    @OneToOne()
     @JoinColumn(name = "userId")
     private User user;
 }

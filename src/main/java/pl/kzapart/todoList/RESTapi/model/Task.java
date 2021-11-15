@@ -7,6 +7,7 @@ import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -21,12 +22,13 @@ public class Task {
     private String description;
     private String url;
     private Instant createdDate;
-    @ManyToOne(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-    @JoinColumn(name = "userId", referencedColumnName = "userID")
-    private User user;
-    @ManyToOne(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+    private String userName;
+
+
+    @ManyToOne()
     @JoinColumn(name = "teamId", referencedColumnName = "teamId")
     private Team team;
+
+    @OneToMany(mappedBy = "task",orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Comment> comments;
 }

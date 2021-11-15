@@ -34,6 +34,7 @@ public class TeamService {
        Team save = teamRepository.save(teamMapper.mapDtoToTeam(teamDto));
        teamDto.setTeamId(save.getTeamId());
 
+       //save.getUsers().add(current);
        Set<User> newy = new HashSet<>();
        newy.add(current);
        save.setUsers(newy);
@@ -92,5 +93,16 @@ public class TeamService {
 
         teamRepository.save(upTeam);
 
+    }
+    @Transactional()
+    public Set<TeamDto> showCurrentUserTeams()
+    {
+        User currentUser = authService.getCurrentUser();
+        Set<Team> teams = teamRepository.findByUsers(currentUser);
+
+
+        return teams.stream()
+                .map(teamMapper::mapTeamToDto)
+                .collect(Collectors.toSet());
     }
 }

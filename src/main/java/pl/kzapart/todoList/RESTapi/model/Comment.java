@@ -19,12 +19,10 @@ public class Comment {
     private Long commentId;
     private String text;
     private Instant createdDate;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+
+    @ManyToOne()
     @JoinColumn(name = "taskId", referencedColumnName = "taskId")
     private Task task;
-    @ManyToOne(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User user;
+
+    private String userName;
 }
