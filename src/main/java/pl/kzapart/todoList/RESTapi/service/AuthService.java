@@ -40,7 +40,7 @@ public class AuthService {
     private final UserProfileRepository userProfileRepository;
 
 
-    public void signup(RegisterRequest registerRequest) {
+    public boolean signup(RegisterRequest registerRequest) {
        //create user
         User user = new User();
         //create user profile
@@ -58,13 +58,14 @@ public class AuthService {
 
         //verify if user exist in database;
         Optional<User> ifExist = userRepository.findByUsername(registerRequest.getUsername());
-        if(ifExist.isPresent())
-            throw new IllegalStateException("User already exist!");
+        if(ifExist.isPresent()) {
+            System.out.println("User already exists");
+            return false;
+        }
         else
         {
             userProfileRepository.save(userProfile);
             userRepository.save(user);
-
         }
 
 
@@ -76,6 +77,7 @@ public class AuthService {
                 user.getEmail(), "Thank you for signing up!, " +
                 "please click on the below url to activate your account : " +
                 "http://localhost:8080/api/v1/auth/accountVerification/" + token));
+        return true;
     }
 
     private void fetchUserAndEnable(VerificationToken verificationToken) {

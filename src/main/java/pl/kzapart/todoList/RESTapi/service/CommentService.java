@@ -29,10 +29,10 @@ public class CommentService {
 
     @Transactional
     @Procedure
-    public Comment createPost(CommentDto commentDto)
+    public Comment createComment(CommentDto commentDto)
     {
         User current = authService.getCurrentUser();
-        Task task = taskRepository.findById(commentDto.getTaskId()).orElseThrow(()-> new IllegalStateException("Post doesnt exist"));
+        Task task = taskRepository.findById(commentDto.getTaskId()).orElseThrow(()-> new IllegalStateException("Task doesnt exist"));
 
         Comment save = commentRepository.save(commentMapper.map(commentDto,current,task));
 
@@ -50,9 +50,8 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
-    public List<CommentDto> getCommentsByUsername(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new SpringTodoException("No such user found"));
-        List<Comment> comments = commentRepository.findByUserName(user.getUsername());
+    public List<CommentDto> getCommentsByUsername(String username) {
+        List<Comment> comments = commentRepository.findByUserName(username);
 
         return comments
                 .stream()

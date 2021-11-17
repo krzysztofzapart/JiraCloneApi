@@ -19,18 +19,18 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody CommentDto commentDto)
     {
-        commentService.createPost(commentDto);
+        commentService.createComment(commentDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
     @GetMapping("/by-task/{taskId}")
-    public List<CommentDto> getCommentsByTask(Long taskId)
+    public List<CommentDto> getCommentsByTask(@PathVariable Long taskId)
     {
         return commentService.getCommentsByTask(taskId);
     }
     @GetMapping("/by-user/{taskId}")
-    public List<CommentDto> getCommentsByUser(Long userId)
+    public List<CommentDto> getCommentsByUser(@PathVariable String username)
     {
-        return commentService.getCommentsByUsername(userId);
+        return commentService.getCommentsByUsername(username);
     }
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId)
