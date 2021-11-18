@@ -1,9 +1,6 @@
 package pl.kzapart.todoList.RESTapi.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
@@ -12,7 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -27,7 +25,7 @@ public class Team {
 
     @OneToMany(mappedBy = "team", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Task> tasks;
-
+    private String teamOwner;
     private Instant createdDate;
 
     @ManyToMany()

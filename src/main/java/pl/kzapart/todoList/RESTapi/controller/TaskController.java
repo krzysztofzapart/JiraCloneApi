@@ -1,11 +1,13 @@
 package pl.kzapart.todoList.RESTapi.controller;
 
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.kzapart.todoList.RESTapi.dto.TaskRequest;
 import pl.kzapart.todoList.RESTapi.dto.TaskResponse;
+import pl.kzapart.todoList.RESTapi.model.dict.TaskStatus;
 import pl.kzapart.todoList.RESTapi.service.TaskService;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/tasks")
+@DynamicUpdate
 public class TaskController {
 
     private final TaskService taskService;
@@ -23,12 +26,6 @@ public class TaskController {
         taskService.save(taskRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    @PostMapping("/admin")
-    public ResponseEntity<Void> saveForAdmin(@RequestBody TaskRequest taskRequest)
-    {
-        taskService.saveForAdmin(taskRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
 
     @GetMapping("by-team/{id}")
     public ResponseEntity<List<TaskResponse>> getTasksByTeam(Long id) {
@@ -36,7 +33,7 @@ public class TaskController {
     }
 
     @GetMapping("by-user/{name}")
-    public ResponseEntity<List<TaskResponse>> getTasksByUser(String name)
+    public ResponseEntity<List<TaskResponse>> getTasksByUser(java.lang.String name)
     {
         return ResponseEntity.status(HttpStatus.OK).body(taskService.getTasksByUser(name));
     }
@@ -47,14 +44,30 @@ public class TaskController {
     }
 
     @PutMapping
-    public ResponseEntity<String> editTask(@RequestBody TaskRequest taskRequest)
+    public ResponseEntity<java.lang.String> editTask(@RequestBody TaskRequest taskRequest)
     {
         taskService.editTask(taskRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @PutMapping("/edit-task-status/{taskId}")
+    public ResponseEntity<java.lang.String> editTaskStatus(@RequestBody TaskStatus taskStatus, @PathVariable Long taskId)
+    {
+        taskService.editTaskStatus(taskStatus, taskId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/by-status/{taskStatus}")
+    public ResponseEntity<List<TaskResponse>> getUsersTasksByTaskStatus(@PathVariable TaskStatus taskStatus)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(taskService.getUsersTasksByTaskStatus(taskStatus));
+    }
+    @GetMapping("/by-status/{taskStatus}/user/{username}")
+    public ResponseEntity<List<TaskResponse>> getUsersTasksByTaskStatusAndUsername(@PathVariable TaskStatus taskStatus, @PathVariable String username)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(taskService.getUsersTasksByTaskStatusAndUsername(taskStatus,username));
+    }
 
     @DeleteMapping("{taskId}")
-    public ResponseEntity<String> deleteTaskById(@PathVariable Long taskId)
+    public ResponseEntity<java.lang.String> deleteTaskById(@PathVariable Long taskId)
     {
         taskService.deleteTask(taskId);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -61,12 +61,6 @@ public class TeamController {
         teamService.deleteUserFromTeam(teamId, userId);
         return new ResponseEntity<>( HttpStatus.OK);
     }
-    @GetMapping("/show-current-user-teams")
-    public ResponseEntity<Object> showCurrentUserTeams()
-    {
-        teamService.showCurrentUserTeams();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
 }
 

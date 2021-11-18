@@ -15,6 +15,9 @@ public class TeamDto {
     private Long teamId;
     private String name;
     private String description;
+    private String teamOwner;
     private Integer numberOfTasks;
+
+
 
 }

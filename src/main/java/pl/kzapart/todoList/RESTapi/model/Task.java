@@ -1,15 +1,15 @@
 package pl.kzapart.todoList.RESTapi.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
+import lombok.*;
+import pl.kzapart.todoList.RESTapi.model.dict.TaskPriority;
+import pl.kzapart.todoList.RESTapi.model.dict.TaskStatus;
 
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -18,12 +18,16 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
-    private String taskName;
-    private String description;
-    private String url;
+    private java.lang.String taskName;
+    private java.lang.String description;
+    private java.lang.String url;
     private Instant createdDate;
-    private String userName;
-
+    private java.lang.String userName;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus taskStatus;
+    @Enumerated(EnumType.STRING)
+    private TaskPriority taskPriority;
+    private String createdBy;
 
     @ManyToOne()
     @JoinColumn(name = "teamId", referencedColumnName = "teamId")
