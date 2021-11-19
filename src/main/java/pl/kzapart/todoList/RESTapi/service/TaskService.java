@@ -2,8 +2,6 @@ package pl.kzapart.todoList.RESTapi.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kzapart.todoList.RESTapi.dto.TaskRequest;
@@ -35,15 +33,22 @@ public class TaskService {
     @Transactional
     public Task save(TaskRequest taskRequest)
     {
-        Team team = teamRepository.findByName(taskRequest.getTeamName()).orElseThrow(()-> new SpringTodoException("Cannot found team by name "+taskRequest.getTeamName()));
-        User user = userRepository.findByUsername(taskRequest.getUsername()).orElseThrow(() -> new SpringTodoException("Cannot found user by name "+taskRequest.getUsername()));
-        Task save = taskRepository.save(taskMapper.map(taskRequest, team, user));
-        User currentUser = authService.getCurrentUser();
+        if(checkIfUserIsInTeam(taskRequest))
+        {
+            Team team = teamRepository.findByName(taskRequest.getTeamName()).orElseThrow(()-> new SpringTodoException("Cannot found team by name "+taskRequest.getTeamName()));
+            User user = userRepository.findByUsername(taskRequest.getUsername()).orElseThrow(() -> new SpringTodoException("Cannot found user by name "+taskRequest.getUsername()));
+            Task save = taskRepository.save(taskMapper.map(taskRequest, team, user));
+            User currentUser = authService.getCurrentUser();
 
-        save.setTeam(team);
-        save.setUserName(taskRequest.getUsername());
-        save.setCreatedBy(currentUser.getUsername());
-        return save;
+            save.setTeam(team);
+            save.setUserName(taskRequest.getUsername());
+            save.setCreatedBy(currentUser.getUsername());
+            return save;
+        }
+        else
+            throw new SpringTodoException("The selected user is not a member of this team ");
+
+
     }
 
     @Transactional(readOnly = true)
@@ -77,7 +82,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void editTask(TaskRequest taskRequest)
+    public Task editTask(TaskRequest taskRequest)
     {
         if (checkIfUserIsOwner(taskRequest.getTaskId()))
         {
@@ -86,6 +91,7 @@ public class TaskService {
             editedTask.setTaskName(taskRequest.getTaskName());
             editedTask.setDescription(taskRequest.getDescription());
             editedTask.setUrl(taskRequest.getUrl());
+            return editedTask;
         }
         else
             throw new SpringTodoException("User is not the owner of the task");
@@ -93,13 +99,14 @@ public class TaskService {
 
     }
     @Transactional
-    public void editTaskStatus(TaskStatus taskStatus, Long taskId)
+    public Task editTaskStatus(TaskStatus taskStatus, Long taskId)
     {
         if (checkIfUserIsOwner(taskId))
         {
             Task editedTask = taskRepository.findById(taskId).orElseThrow(() -> new SpringTodoException("No such task found"));
             taskRepository.save(editedTask);
             editedTask.setTaskStatus(taskStatus);
+            return editedTask;
         }
         else
             throw new SpringTodoException("User is not the owner of the task");
@@ -144,5 +151,13 @@ public class TaskService {
         else
             return false;
     }
-
+    private boolean checkIfUserIsInTeam(TaskRequest taskRequest)
+    {
+        User user = userRepository.findByUsername(taskRequest.getUsername()).orElseThrow(()-> new SpringTodoException("No such user found"));
+        Team team = teamRepository.findByName(taskRequest.getTeamName()).orElseThrow(()-> new IllegalStateException("No such team found"));
+        if(team.getUsers().contains(user))
+            return true;
+        else
+            return false;
+    }
 }

@@ -31,9 +31,11 @@ public class TeamService {
     public TeamDto save(TeamDto teamDto)
     {
        User current = authService.getCurrentUser();
+
        Team save = teamRepository.save(teamMapper.mapDtoToTeam(teamDto));
-       teamDto.setTeamId(save.getTeamId());
-       teamDto.setTeamOwner(current.getUsername());
+       //
+        save.setTeamOwner(current.getUsername());
+       //teamDto.setTeamOwner(current.getUsername());
 
        Set<User> newy = new HashSet<>();
        newy.add(current);
@@ -46,11 +48,13 @@ public class TeamService {
     {
         User newUser = userRepository.findById(userId).orElseThrow(() -> new SpringTodoException("No such user found"));
         Team upTeam = teamRepository.findById(teamId).orElseThrow(() -> new SpringTodoException("No such team found"));
-
-        upTeam.getUsers().add(newUser);
-
-        teamRepository.save(upTeam);
-
+        if(checkIfIsOwner(teamId))
+        {
+            upTeam.getUsers().add(newUser);
+            teamRepository.save(upTeam);
+        }
+        else
+            throw new SpringTodoException("User is not owner of the team");
     }
 
     @Transactional(readOnly = true)
@@ -73,15 +77,22 @@ public class TeamService {
     public void editTeam(TeamDto teamDto)
     {
         Team team = teamRepository.findById(teamDto.getTeamId()).orElseThrow(() -> new SpringTodoException("No such team found"));
-        team.setDescription(teamDto.getDescription());
-        team.setName(teamDto.getName());
+        if(checkIfIsOwner(teamDto.getTeamId()))
+        {
+            team.setDescription(teamDto.getDescription());
+            team.setName(teamDto.getName());
+        }
+        else
+            throw new SpringTodoException("User is not owner of the team");
     }
 
     @Transactional
     public void deleteTeam(Long teamId)
     {
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new SpringTodoException("No such team found"));
-        teamRepository.delete(team);
+        if(checkIfIsOwner(teamId))
+            teamRepository.delete(team);
+        else throw new SpringTodoException("User is not owner of the team");
     }
     @Transactional
     public void deleteUserFromTeam(Long teamId, Long userId)
@@ -89,10 +100,22 @@ public class TeamService {
         User newUser = userRepository.findById(userId).orElseThrow(() -> new SpringTodoException("No such user found"));
         Team upTeam = teamRepository.findById(teamId).orElseThrow(() -> new SpringTodoException("No such team found"));
 
-        upTeam.getUsers().remove(newUser);
+        if (checkIfIsOwner(teamId))
+        {
+            upTeam.getUsers().remove(newUser);
+            teamRepository.save(upTeam);
+        }
+        else throw new SpringTodoException("User is not owner of the team");
+    }
 
-        teamRepository.save(upTeam);
+    private boolean checkIfIsOwner(Long teamId)
+    {
+        User currentUser = authService.getCurrentUser();
+        Team team = teamRepository.findById(teamId).orElseThrow(()-> new SpringTodoException("No such team found"));
 
+        if(currentUser.getUsername().equals(team.getTeamOwner()))
+            return true;
+        else return false;
     }
 
 

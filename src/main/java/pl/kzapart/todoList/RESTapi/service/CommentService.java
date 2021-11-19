@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kzapart.todoList.RESTapi.dto.CommentDto;
+import pl.kzapart.todoList.RESTapi.dto.TaskRequest;
 import pl.kzapart.todoList.RESTapi.exceptions.SpringTodoException;
 import pl.kzapart.todoList.RESTapi.mapper.CommentMapper;
 import pl.kzapart.todoList.RESTapi.model.Comment;
 import pl.kzapart.todoList.RESTapi.model.Task;
+import pl.kzapart.todoList.RESTapi.model.Team;
 import pl.kzapart.todoList.RESTapi.model.User;
 import pl.kzapart.todoList.RESTapi.repository.CommentRepository;
 import pl.kzapart.todoList.RESTapi.repository.TaskRepository;
@@ -60,18 +62,37 @@ public class CommentService {
     }
 
     @Transactional
-    public void editComment(CommentDto commentDto)
+    public Comment editComment(CommentDto commentDto)
     {
         Comment editedComment = commentRepository.findById(commentDto.getCommentId()).orElseThrow(() -> new SpringTodoException("No such comment found"));
+        if(checkIfUserIsOwner(editedComment))
+        {
+            editedComment.setText(commentDto.getText());
+            return editedComment;
+        }
+        else throw new SpringTodoException("User is not the owner of the comment");
 
-        editedComment.setText(commentDto.getText());
     }
 
     @Transactional
     public void deleteComment(Long commentId)
     {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new SpringTodoException("No such comment found"));
-        commentRepository.delete(comment);
+
+        if(checkIfUserIsOwner(comment))
+            commentRepository.delete(comment);
+        else
+            throw new SpringTodoException("User is not the owner of the comment");
+
+    }
+
+    private boolean checkIfUserIsOwner(Comment comment)
+    {
+        User currentUser = authService.getCurrentUser();
+        if(currentUser.getUsername().equals(comment.getUserName()))
+            return true;
+        else
+            return false;
     }
 
 }
