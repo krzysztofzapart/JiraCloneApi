@@ -75,6 +75,7 @@ public class AuthService {
                 user.getEmail(), "Thank you for signing up!, " +
                 "please click on the below url to activate your account : " +
                 "http://https://jira-kanban-clone.herokuapp.com/api/v1/auth/accountVerification/" + token));
+        System.out.println(token);
         return "In case the post server crashes, this is your activation token: "+ token;
     }
 
