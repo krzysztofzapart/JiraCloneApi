@@ -39,7 +39,6 @@ public class UserProfileService {
         editedProfile.setLastname(userProfile.getLastname());
         editedProfile.setDescription(userProfile.getDescription());
         editedProfile.setJobName(userProfile.getJobName());
-        //TODO FILE UPLOADING
         editedProfile.setAvatar(userProfile.getAvatar());
     }
 

@@ -39,7 +39,7 @@ public class AuthService {
     private final UserProfileRepository userProfileRepository;
 
 
-    public boolean signup(RegisterRequest registerRequest) {
+    public String signup(RegisterRequest registerRequest) {
        //create user
         User user = new User();
         //create user profile
@@ -58,8 +58,7 @@ public class AuthService {
         //verify if user exist in database;
         Optional<User> ifExist = userRepository.findByUsername(registerRequest.getUsername());
         if(ifExist.isPresent()) {
-            System.out.println("User already exists");
-            return false;
+            return "User already exists";
         }
         else
         {
@@ -75,8 +74,8 @@ public class AuthService {
         mailService.sendMail(new NotificationEmail("Please Activate your Account",
                 user.getEmail(), "Thank you for signing up!, " +
                 "please click on the below url to activate your account : " +
-                "http://localhost:8080/api/v1/auth/accountVerification/" + token));
-        return true;
+                "http://https://jira-kanban-clone.herokuapp.com/api/v1/auth/accountVerification/" + token));
+        return "In case the post server crashes, this is your activation token: "+ token;
     }
 
     private void fetchUserAndEnable(VerificationToken verificationToken) {
