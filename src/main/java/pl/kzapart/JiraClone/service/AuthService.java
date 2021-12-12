@@ -1,6 +1,7 @@
 package pl.kzapart.JiraClone.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -76,6 +78,7 @@ public class AuthService {
                 "please click on the below url to activate your account : " +
                 "http://https://jira-kanban-clone.herokuapp.com/api/v1/auth/accountVerification/" + token));
         System.out.println(token);
+        log.info(token);
         return "In case the post server crashes, this is your activation token: "+ token;
     }
 
