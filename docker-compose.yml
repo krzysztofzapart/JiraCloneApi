@@ -1,0 +1,38 @@
+version: "3"
+services:
+
+  database:
+    platform: linux/x86_64
+    container_name: 'mysql'
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: p@ssword
+      MYSQL_USER: JiraCloneUser
+      MYSQL_DATABASE: JiraCloneDb
+    ports:
+      - "3306:3306"
+    networks:
+      - mysql-db
+  maildev:
+    image: maildev/maildev
+    ports:
+      - "1080:80"
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - mysql-db
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_PASSWORD: p@ssword
+      SPRING_DATASOURCE_USER: JiraCloneUser
+      SPRING_DATASOURCE_NAME: JiraCloneDb
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/JiraCloneDb?enabledTLSProtocols=TLSv1.2
+    links:
+      - database
+networks:
+  mysql-db:
+    driver: bridge
